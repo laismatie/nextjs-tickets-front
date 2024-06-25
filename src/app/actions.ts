@@ -21,3 +21,8 @@ export async function unselectSpotAction(spotName: string) {
   const newSpots = spots.filter((spot: string) => spot !== spotName);
   cookieStore.set("spots", JSON.stringify(newSpots));
 }
+
+export async function selectTicketTypeAction(ticketKind: "full" | "half") {
+  const cookieStore = cookies();
+  cookieStore.set("ticketKind", ticketKind);
+}

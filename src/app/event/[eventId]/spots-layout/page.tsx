@@ -2,6 +2,8 @@ import Link from "next/link";
 import { EventModel, SpotModel } from "@/app/model";
 import { Title } from "@/app/components/Title";
 import { SpotSeat } from "@/app/components/SpotSeat";
+import { TicketKindSelect } from "./TicketKindSelect";
+import { cookies } from "next/headers";
 
 export async function getSpots(eventId: string): Promise<{
   event: EventModel;
@@ -49,6 +51,19 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
       ]
     }
   })
+
+  const cookieStore = cookies();
+  const selectedSpots = JSON.parse(cookieStore.get("spots")?.value || "[]");
+  let totalPrice = selectedSpots.length * event.price;
+  const ticketKind = cookieStore.get("ticketKind")?.value || "full";
+
+  if (ticketKind === "half") {
+    totalPrice = totalPrice / 2;
+  }
+  const formattedTotalPrice = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(totalPrice);
 
   return (
     <main className="mt-10">
@@ -99,8 +114,8 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
                         spotId={spot.name}
                         eventId={event.id}
                         spotLabel={spot.name.slice(1)}
-                        reserved={false}
-                        disabled={false}
+                        selected={selectedSpots.includes(spot.name)}
+                        disabled={spot.status === 'sold'}
                       />
                     );
                   })}
@@ -133,9 +148,9 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
             Meia-entrada: {`R$ 50,00`}
           </p>
           <div className="flex flex-col">
-            select para escolher se é inteira ou meia
+            <TicketKindSelect defaultValue={ticketKind as any} price={event.price}/>
           </div>
-          <div>Total: {`R$ preço total`}</div>
+          <div>Total: {formattedTotalPrice}</div>
           <Link
             href="/checkout"
             className="rounded-lg bg-btn-primary py-4 text-sm font-semibold uppercase text-btn-primary text-center hover:bg-[#fff]"

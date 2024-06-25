@@ -11,4 +11,5 @@ export type EventModel = {
 
 export type SpotModel = {
   name: string;
+  status: string;
 };

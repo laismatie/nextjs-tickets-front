@@ -6,7 +6,7 @@ interface SpotSeatProps {
   spotId: string;
   eventId: string;
   spotLabel: string;
-  reserved: boolean;
+  selected: boolean;
   disabled: boolean;
 }
 
@@ -14,7 +14,7 @@ export const SpotSeat = ({
   spotId,
   eventId,
   spotLabel,
-  reserved,
+  selected,
   disabled,
 }: SpotSeatProps) => {
   return (
@@ -26,7 +26,7 @@ export const SpotSeat = ({
         className="peer hidden"
         value={spotId}
         disabled={disabled}
-        defaultChecked={reserved}
+        defaultChecked={selected}
         onChange={async (event) => { event.target.checked ? selectSpotAction(eventId, spotId) : unselectSpotAction(spotId)}}
       />
       <label
