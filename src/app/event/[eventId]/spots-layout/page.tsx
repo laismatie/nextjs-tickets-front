@@ -86,7 +86,7 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
           <div className="rounded-2xl bg-bar py-4 text-center text-[20px] font-bold uppercase text-white">
             Palco
           </div>
-          <div className="md:w-full md:justify-normal overflow-x-scroll">
+          <div className="md:w-full md:justify-normal overflow-x-scroll no-scrollbar">
             {spotGroupedByRow.map((row) => {
               return(
                 <div key={row.row} className="flex flex-row gap-3 items-center mb-3">
@@ -108,7 +108,7 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
               )
             })}
           </div>
-          <div className="flex w-full justify-around overflow-x-scroll gap-4">
+          <div className="flex w-full justify-around overflow-x-scroll no-scrollbar gap-4">
             <div className=" flex items-center">
               <span className="mr-1 block h-4 w-4 rounded-full bg-[#00A96E]" />
               Disponível
