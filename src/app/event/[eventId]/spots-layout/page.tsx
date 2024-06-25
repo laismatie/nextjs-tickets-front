@@ -97,6 +97,7 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
                       <SpotSeat
                         key={spot.name}
                         spotId={spot.name}
+                        eventId={event.id}
                         spotLabel={spot.name.slice(1)}
                         reserved={false}
                         disabled={false}
