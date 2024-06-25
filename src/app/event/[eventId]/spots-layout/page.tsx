@@ -3,21 +3,52 @@ import { EventModel, SpotModel } from "@/app/model";
 import { Title } from "@/app/components/Title";
 import { SpotSeat } from "@/app/components/SpotSeat";
 
-export default function SpotsLayoutPage() {
-  const event: EventModel = {
-    id: "1",
-    name: "Mulheres que Mudam o Mundo com a Tecnologia",
-    organization: "Developer Girls",
-    date: "2024-03-16T00:00:00.000Z",
-    location: "Campo Grande, MS",
-    price: 0,
-    rating: "",
-    image_url: "https://images.sympla.com.br/65c2f14eac7a9-lg.png"
-  };
+export async function getSpots(eventId: string): Promise<{
+  event: EventModel;
+  spots: SpotModel[];
+}> {
+  const response = await fetch(
+    `http://localhost:8080/events/${eventId}/spots`,
+    {
+      cache: "no-store",
+    }
+  );
 
-  const spot: SpotModel = {
-    name: "A1",
-  }
+  return response.json();
+}
+
+export default async function SpotsLayoutPage({params}: {params: {eventId: string}} ) {
+  const {event, spots} = await getSpots(params.eventId)
+
+  //[A, A, B, B, C, D, D]
+  const rowLetters = spots.map((spot) => spot.name[0]);
+
+  //[A, B, C, D]
+  const uniqueRows = rowLetters.filter((row, index) => rowLetters.indexOf(row) === index);
+
+  const spotGroupedByRow = uniqueRows.map((row) => {
+    return {
+      row,
+      spots: [
+        ...spots
+        .filter(spot => spot.name[0] === row)
+        .sort((a, b) => {
+          const aNumber = parseInt(a.name.slice(1));
+          const bNumber = parseInt(b.name.slice(1));
+
+          if(aNumber > bNumber) {
+            return -1;
+          }
+
+          if(bNumber > aNumber) {
+            return 1;
+          }
+
+          return 0;
+        })
+      ]
+    }
+  })
 
   return (
     <main className="mt-10">
@@ -55,30 +86,38 @@ export default function SpotsLayoutPage() {
           <div className="rounded-2xl bg-bar py-4 text-center text-[20px] font-bold uppercase text-white">
             Palco
           </div>
-          <div className="md:w-full md:justify-normal">
-            <div className="flex flex-row gap-3 items-center mb-3">
-              <div className="w-4">A</div>
-                <div className="ml-2 flex flex-row">
-                  <SpotSeat
-                    key={spot.name}
-                    spotId={spot.name}
-                    spotLabel={spot.name.slice(1)}
-                    reserved={false}
-                    disabled={false}
-                  />
+          <div className="md:w-full md:justify-normal overflow-x-scroll">
+            {spotGroupedByRow.map((row) => {
+              return(
+                <div key={row.row} className="flex flex-row gap-3 items-center mb-3">
+                <div className="w-4">{row.row}</div>
+                  <div className="ml-2 flex flex-row">
+                  {row.spots.map((spot) => {
+                    return (
+                      <SpotSeat
+                        key={spot.name}
+                        spotId={spot.name}
+                        spotLabel={spot.name.slice(1)}
+                        reserved={false}
+                        disabled={false}
+                      />
+                    );
+                  })}
+                  </div>
                 </div>
-              </div>
+              )
+            })}
           </div>
-          <div className="flex w-full flex-row justify-around">
-            <div className=" flex flex-row items-center">
+          <div className="flex w-full justify-around overflow-x-scroll gap-4">
+            <div className=" flex items-center">
               <span className="mr-1 block h-4 w-4 rounded-full bg-[#00A96E]" />
               Disponível
             </div>
-            <div className=" flex flex-row items-center">
+            <div className=" flex items-center">
               <span className="mr-1 block h-4 w-4 rounded-full bg-[#A6ADBB]" />
               Ocupado
             </div>
-            <div className=" flex flex-row items-center">
+            <div className=" flex items-center">
               <span className="mr-1 block h-4 w-4  rounded-full bg-[#7480FF]" />
               Selecionado
             </div>
