@@ -4,6 +4,7 @@ import { Title } from "@/app/components/Title";
 import { SpotSeat } from "@/app/components/SpotSeat";
 import { TicketKindSelect } from "./TicketKindSelect";
 import { cookies } from "next/headers";
+import { EventImage } from "@/app/components/EventImage";
 
 export async function getSpots(eventId: string): Promise<{
   event: EventModel;
@@ -13,6 +14,9 @@ export async function getSpots(eventId: string): Promise<{
     `http://localhost:8080/events/${eventId}/spots`,
     {
       cache: "no-store",
+      next: {
+        tags: [`events/${eventId}`]
+      }
     }
   );
 
@@ -68,7 +72,7 @@ export default async function SpotsLayoutPage({params}: {params: {eventId: strin
   return (
     <main className="mt-10">
       <div className="flex w-[1176px] max-w-full flex-row flex-wrap justify-center gap-x-8 rounded-2xl bg-secondary p-4 md:justify-normal">
-        <img src={event.image_url} alt={event.name} />
+        <EventImage src={event.image_url} alt={event.name} />
         <div className="flex max-w-full flex-col gap-y-6">
           <div className="flex flex-col gap-y-2 ">
             <p className="text-sm font-semibold uppercase text-subtitle">

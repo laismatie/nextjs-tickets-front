@@ -1,17 +1,40 @@
+import { cookies } from "next/headers";
 import { Title } from "../components/Title";
+import { redirect } from "next/navigation";
 import { EventModel } from "../model";
+import { CheckoutForm } from "./CheckoutForm";
+
+export async function getEvent(eventId: string): Promise<EventModel> {
+  const response = await fetch(`http://localhost:8080/events/${eventId}`, {
+    cache: "no-store",
+    next: {
+      tags: [`events/${eventId}`]
+    }
+  });
+
+  return response.json();
+}
 
 export default async function CheckoutPage() {
-  const event: EventModel = {
-    id: "1",
-    name: "Mulheres que Mudam o Mundo com a Tecnologia",
-    organization: "Developer Girls",
-    date: "2024-03-16T00:00:00.000Z",
-    location: "Campo Grande, MS",
-    price: 0,
-    rating: "",
-    image_url: "https://images.sympla.com.br/65c2f14eac7a9-lg.png"
-  };
+  const cookiesStore = cookies();
+  const eventId = cookiesStore.get("eventId")?.value;
+  if (!eventId) {
+    return redirect("/");
+  }
+
+  const event = await getEvent(eventId);
+  const selectedSpots = JSON.parse(cookiesStore.get("spots")?.value || "[]");
+
+  let totalPrice = selectedSpots.length * event.price;
+  const ticketKind = cookiesStore.get("ticketKind")?.value;
+  if (ticketKind === "half") {
+    totalPrice = totalPrice / 2;
+  }
+
+  const formattedTotalPrice = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(totalPrice);
 
   return (
     <main className="mt-10 flex flex-wrap justify-center md:justify-between">
@@ -29,10 +52,12 @@ export default async function CheckoutPage() {
             year: "numeric",
           })}
         </p>
-        <p className="font-semibold text-white">{`preço total`}</p>
+        <p className="font-semibold text-white">{formattedTotalPrice}</p>
       </div>
       <div className="w-full max-w-[650px] rounded-2xl bg-secondary p-4">
         <Title>Informações de pagamento</Title>
+
+        <CheckoutForm className="my-6 flex flex-col gap-y-3">
           <div className="flex flex-col">
             <label htmlFor="titular">E-mail</label>
             <input
@@ -83,6 +108,7 @@ export default async function CheckoutPage() {
           <button className="rounded-lg bg-btn-primary py-4 px-4 text-sm font-semibold uppercase text-btn-primary">
             Finalizar pagamento
           </button>
+        </CheckoutForm>
       </div>
     </main>
   );

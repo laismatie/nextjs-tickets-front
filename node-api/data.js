@@ -6,7 +6,7 @@ module.exports = {
         organization: "Developer Girls",
         date: "2024-03-16T00:00:00.000Z",
         location: "Campo Grande, MS",
-        price: 100,
+        price: 100.00,
         rating: "10",
         image_url: "https://images.sympla.com.br/65c2f14eac7a9-lg.png"
       },
@@ -16,7 +16,7 @@ module.exports = {
         organization: "Developer Girls",
         date: "2024-03-15T00:00:00.000Z",
         location: "Campo Grande, MS",
-        price: 10,
+        price: 120.00,
         rating: "14",
         image_url: "https://images.sympla.com.br/65c2f14eac7a9-lg.png"
       },
@@ -26,7 +26,7 @@ module.exports = {
         organization: "Developer Girls",
         date: "2024-03-14T00:00:00.000Z",
         location: "Campo Grande, MS",
-        price: 160,
+        price: 160.00,
         rating: "16",
         image_url: "https://images.sympla.com.br/65c2f14eac7a9-lg.png"
       },
