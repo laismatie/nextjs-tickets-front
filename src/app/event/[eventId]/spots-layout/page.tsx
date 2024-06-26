@@ -6,12 +6,12 @@ import { TicketKindSelect } from "./TicketKindSelect";
 import { cookies } from "next/headers";
 import { EventImage } from "@/app/components/EventImage";
 
-export async function getSpots(eventId: string): Promise<{
+async function getSpots(eventId: string): Promise<{
   event: EventModel;
   spots: SpotModel[];
 }> {
   const response = await fetch(
-    `${process.env.GOLANG_API_TOKEN}/events/${eventId}/spots`,
+    `${process.env.GOLANG_API_URL}/events/${eventId}/spots`,
     {
       headers: {
         "apikey": process.env.GOLANG_API_TOKEN as string
